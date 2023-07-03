@@ -1,0 +1,24 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: directory_vessels
+  kafka:
+    consumer:
+      auto-offset-reset: latest
+      group-id: ${kafka_groupId}
+      bootstrap-servers: ${kafka_server}
+      client: ${kafka_client}
+      topics: ${kafka_topics}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.smartgeosystems.directory_vessels.kafka.VesselDeserializer
+  liquibase:
+    enabled: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5435/directory_vessels
+    username: postgres
+    password: password
+
