@@ -1,6 +1,5 @@
 package com.smartgeosystems.directory_vessels.services.vessel;
 
-import com.smartgeosystems.directory_vessels.dto.VesselKafkaDto;
 import com.smartgeosystems.directory_vessels.mappers.VesselMapper;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.repository.VesselRepository;
@@ -8,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.vmts.vessel.VesselInfo;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service
@@ -30,23 +31,37 @@ public class VesselServiceImpl implements VesselService {
 
     @Override
     @Transactional
-    public void processingVessel(VesselKafkaDto vesselKafkaDto) {
-        var mmsi = vesselKafkaDto.getMmsi();
-        Optional<Vessel> byMmsi = vesselRepository.findByMmsi(mmsi);
-        if (byMmsi.isEmpty()) {
-            Vessel vessel = createNewVessel(vesselKafkaDto);
+    public void processingVessel(VesselInfo vesselInfo) {
+        var mmsi = vesselInfo.getMmsi();
+        if (isAton(mmsi)) {
             return;
         }
-        Vessel vessel = byMmsi.get();
-        updateVessel(vessel, vesselKafkaDto);
+        Optional<Vessel> byId = vesselRepository.findById(vesselInfo.getImo());
+        if (byId.isEmpty()) {
+            Vessel vessel = createNewVessel(vesselInfo);
+            vesselRepository.save(vessel);
+            return;
+        }
+        Vessel vessel = byId.get();
+        updateVessel(vessel, vesselInfo);
     }
 
-    private void updateVessel(Vessel vessel, VesselKafkaDto vesselKafkaDto) {
-
+    private void updateVessel(Vessel vessel, VesselInfo vesselInfo) {
+        var packageTimeVessel = vessel.getPackageTime().getTime();
+        var packageTimeVesselUpdate = Timestamp.from(vesselInfo.getPackageTime()).getTime();
+        if (packageTimeVessel < packageTimeVesselUpdate) {
+            vesselMapper.updateVessel(vessel, vesselInfo);
+        }
     }
 
-    private Vessel createNewVessel(VesselKafkaDto vesselKafkaDto) {
-
-        return vesselMapper.vesselKafkaToVessel(vesselKafkaDto);
+    private Vessel createNewVessel(VesselInfo vesselInfo) {
+        return vesselMapper.vesselKafkaToVessel(vesselInfo);
     }
+
+    private boolean isAton(Long mmsi) {
+        var mmsiValue = String.valueOf(mmsi);
+        return mmsiValue.startsWith("999");
+    }
+
+
 }

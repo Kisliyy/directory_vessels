@@ -1,11 +1,11 @@
 package com.smartgeosystems.directory_vessels.kafka;
 
-import com.smartgeosystems.directory_vessels.dto.VesselKafkaDto;
 import com.smartgeosystems.directory_vessels.services.vessel.VesselService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.vmts.vessel.VesselInfo;
 
 @Component
 @Slf4j
@@ -19,12 +19,13 @@ public class KafkaVesselListener {
             groupId = "${spring.kafka.consumer.group-id}",
             concurrency = "${spring.kafka.consumer.concurrency}"
     )
-    public void listen(VesselKafkaDto vesselKafkaDto) {
-        if (vesselKafkaDto == null) {
+    public void listen(VesselInfo vesselInfo) {
+        if (vesselInfo == null) {
             log.warn("Consume message is null!");
             return;
         }
-        vesselService.processingVessel(vesselKafkaDto);
+        log.debug(vesselInfo.toString());
+        vesselService.processingVessel(vesselInfo);
     }
 
 }

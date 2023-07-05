@@ -13,8 +13,10 @@ spring:
       topics: ${kafka_topics}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: com.smartgeosystems.directory_vessels.kafka.VesselDeserializer
+      concurrency: 10
   liquibase:
-    enabled: false
+    enabled: true
+    change-log: classpath:db/liquibase/master.xml
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd
+      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
+
+    <changeSet id="2023-07-03--create-table-vessels" author="kiselev">
+        <createTable tableName="vessels">
+            <column name="imo" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mmsi" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mid" type="bigint"/>
+            <column name="vessel_name" type="varchar(120)"/>
+            <column name="call_sign" type="varchar(42)"/>
+            <column name="ship_type_id" type="bigint"/>
+            <column name="destination" type="varchar(300)"/>
+            <column name="eta" type="timestamp with time zone"/>
+            <column name="dimension_to_bow_a" type="double"/>
+            <column name="dimension_to_stern_b" type="double"/>
+            <column name="dimension_to_port_c" type="double"/>
+            <column name="dimension_to_starboard_d" type="double"/>
+            <column name="draught" type="double"/>
+            <column name="package_time" type="timestamp without time zone"/>
+            <column name="gen_width" type="double"/>
+            <column name="gen_length" type="double"/>
+            <column name="creation_time" type="timestamp with time zone" defaultValueComputed="current_timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_time" type="timestamp with time zone"/>
+            <column name="deleted" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="vessels" indexName="imo_index">
+            <column name="imo"/>
+        </createIndex>
+        <createIndex tableName="vessels" indexName="mmsi_index">
+            <column name="mmsi"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

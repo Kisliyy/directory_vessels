@@ -1,7 +1,7 @@
 package com.smartgeosystems.directory_vessels.services.vessel;
 
-import com.smartgeosystems.directory_vessels.dto.VesselKafkaDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
+import org.vmts.vessel.VesselInfo;
 
 import java.util.Optional;
 
@@ -10,5 +10,5 @@ public interface VesselService {
 
     Vessel save(Vessel vessel);
 
-    void processingVessel(VesselKafkaDto vesselKafkaDto);
+    void processingVessel(VesselInfo vesselInfo);
 }

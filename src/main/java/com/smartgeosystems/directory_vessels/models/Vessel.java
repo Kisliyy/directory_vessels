@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,18 +20,20 @@ import java.sql.Timestamp;
 public class Vessel {
 
     @Id
-    private long id;
+    @Column(name = "imo")
+    private Long imo;
 
     @Column(name = "mmsi")
     private Long mmsi;
+
+    @Column(name = "mid")
+    private Long mid;
+
     @Column(name = "vessel_name")
     private String vesselName;
 
     @Column(name = "call_sign")
     private String callSign;
-
-    @Column(name = "imo")
-    private Long imo;
 
     @Column(name = "ship_type_id")
     private Long shipTypeId;
@@ -62,6 +62,12 @@ public class Vessel {
     @Column(name = "package_time")
     private Timestamp packageTime;
 
+    @Column(name = "gen_length")
+    private Double genLength;
+
+    @Column(name = "gen_width")
+    private Double genWidth;
+
     @CreationTimestamp
     @Column(name = "creation_time")
     private Timestamp creationTime;
@@ -69,6 +75,15 @@ public class Vessel {
     @UpdateTimestamp
     @Column(name = "update_time")
     private Timestamp updateTime;
-    @Column(name = "update_time")
+
+    @Column(name = "deleted")
     private boolean deleted;
+
+    @PreUpdate
+    void update() {
+        if (this.creationTime == null) {
+            Date date = new Date();
+            this.creationTime = new Timestamp(date.getTime());
+        }
+    }
 }

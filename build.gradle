@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.13'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'com.github.davidmc24.gradle.plugin.avro' version '1.2.1'
 }
 
 group = 'com.smartgeosystems'
@@ -28,6 +29,7 @@ dependencies {
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.springframework.kafka:spring-kafka'
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	implementation 'org.apache.avro:avro:1.11.1'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -35,6 +37,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+avro {
+	createOptionalGetters = true
+	createSetters = true
 }
 
 tasks.named('test') {

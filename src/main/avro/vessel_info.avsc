@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "name": "VesselInfo",
+  "namespace": "org.vmts.vessel",
+  "fields" : [
+    {"name": "mmsi", "type": ["null", "long"]},
+    {"name": "vesselName", "type": ["null", "string"]},
+    {"name": "callSign", "type": ["null", "string"]},
+    {"name": "imo", "type": ["null", "long"]},
+    {"name": "shipTypeId", "type": ["null", "long"]},
+    {"name": "destination", "type": ["null", "string"]},
+    {"name": "eta", "type": ["null", {"type": "long",  "logicalType": "timestamp-millis"}]},
+    {"name": "dimensionToBowA", "type": ["null", "double"]},
+    {"name": "dimensionToSternB", "type": ["null", "double"]},
+    {"name": "dimensionToPortC", "type": ["null", "double"]},
+    {"name": "dimensionToStarboardD", "type": ["null", "double"]},
+    {"name": "draught", "type": ["null", "double"]},
+    {"name": "packageTime", "type": ["null", {"type": "long",  "logicalType": "timestamp-millis"}]}
+  ]
+}
