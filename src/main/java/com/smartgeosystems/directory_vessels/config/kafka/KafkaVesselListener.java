@@ -1,4 +1,4 @@
-package com.smartgeosystems.directory_vessels.kafka;
+package com.smartgeosystems.directory_vessels.config.kafka;
 
 import com.smartgeosystems.directory_vessels.services.vessel.VesselService;
 import lombok.RequiredArgsConstructor;

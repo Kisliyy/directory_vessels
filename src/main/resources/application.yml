@@ -12,7 +12,7 @@ spring:
       client: ${kafka_client}
       topics: ${kafka_topics}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: com.smartgeosystems.directory_vessels.kafka.VesselDeserializer
+      value-deserializer: com.smartgeosystems.directory_vessels.config.kafka.VesselDeserializer
       concurrency: 10
   liquibase:
     enabled: true

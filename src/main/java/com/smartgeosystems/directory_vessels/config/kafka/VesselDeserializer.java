@@ -1,4 +1,4 @@
-package com.smartgeosystems.directory_vessels.kafka;
+package com.smartgeosystems.directory_vessels.config.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.generic.GenericRecord;
