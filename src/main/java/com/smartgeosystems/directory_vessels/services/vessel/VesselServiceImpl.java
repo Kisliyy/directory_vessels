@@ -1,7 +1,6 @@
 package com.smartgeosystems.directory_vessels.services.vessel;
 
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
-import com.smartgeosystems.directory_vessels.dto.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
@@ -10,7 +9,6 @@ import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.repository.VesselRepository;
 import com.smartgeosystems.directory_vessels.utils.VesselUtils;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.vmts.vessel.VesselInfo;
@@ -22,13 +20,8 @@ import java.util.Optional;
 public class VesselServiceImpl implements VesselService {
 
     private final VesselRepository vesselRepository;
-    private final VesselMapper vesselMapper = Mappers.getMapper(VesselMapper.class);
+    private final VesselMapper vesselMapper;
 
-
-    @Override
-    public Vessel save(Vessel vessel) {
-        return vesselRepository.save(vessel);
-    }
 
     @Override
     @Transactional
@@ -51,7 +44,8 @@ public class VesselServiceImpl implements VesselService {
     }
 
     @Override
-    public VesselResponseDto processingVessel(VesselRequestDto vesselRequestDto) {
+    @Transactional
+    public Vessel processingVessel(VesselRequestDto vesselRequestDto) {
         if (VesselUtils.isAton(vesselRequestDto.getMmsi())) {
             throw new VesselException("The data obtained indicate that this is aton");
         }
@@ -61,23 +55,20 @@ public class VesselServiceImpl implements VesselService {
             throw new VesselException(message);
         }
         Vessel vessel = vesselMapper.vesselRequestDtoToVessel(vesselRequestDto);
-        Vessel persistVessel = vesselRepository.save(vessel);
-        return vesselMapper.vesselToVesselResponseDto(persistVessel);
+        return vesselRepository.save(vessel);
     }
 
     @Override
-    public VesselResponseDto findByImo(long imo) {
+    public Vessel findByImo(long imo) {
         return vesselRepository
                 .findByImo(imo)
-                .map(vesselMapper::vesselToVesselResponseDto)
                 .orElseThrow(() -> new NotFoundException("Vessel not found by imo: " + imo));
     }
 
     @Override
-    public VesselResponseDto findByMmsi(long mmsi) {
+    public Vessel findByMmsi(long mmsi) {
         return vesselRepository
-                .findByImo(mmsi)
-                .map(vesselMapper::vesselToVesselResponseDto)
+                .findByMmsi(mmsi)
                 .orElseThrow(() -> new NotFoundException("Vessel not found by mmsi: " + mmsi));
     }
 
@@ -91,9 +82,10 @@ public class VesselServiceImpl implements VesselService {
             if (VesselUtils.checkPackageTime(vessel.getPackageTime(), vesselUpdateDto.getPackageTime())) {
                 vesselMapper.updateVessel(vessel, vesselUpdateDto);
             }
+            return;
         }
         Vessel vessel = vesselMapper.vesselUpdateDtoToVessel(vesselUpdateDto);
-        save(vessel);
+        vesselRepository.save(vessel);
     }
 
     @Override
@@ -105,8 +97,9 @@ public class VesselServiceImpl implements VesselService {
     }
 
     private void updateVessel(Vessel vessel, VesselInfo vesselInfo) {
+        var packageTimeVesselInfo = vesselInfo.getPackageTime();
         var packageTimeVessel = vessel.getPackageTime();
-        if (VesselUtils.checkPackageTime(packageTimeVessel, vesselInfo.getPackageTime())) {
+        if (VesselUtils.checkPackageTime(packageTimeVessel, packageTimeVesselInfo)) {
             vesselMapper.updateVesselKafkaToVessel(vessel, vesselInfo);
         }
     }

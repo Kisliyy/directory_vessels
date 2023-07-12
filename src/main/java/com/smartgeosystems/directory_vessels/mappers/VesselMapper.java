@@ -1,7 +1,6 @@
 package com.smartgeosystems.directory_vessels.mappers;
 
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
-import com.smartgeosystems.directory_vessels.dto.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.utils.MIDUtils;
@@ -14,7 +13,7 @@ import org.vmts.vessel.VesselInfo;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface VesselMapper {
 
     @Mapping(target = "eta")
@@ -64,9 +63,6 @@ public interface VesselMapper {
     @Mapping(target = "genLength", source = ".", qualifiedByName = "dimensionToGenLength")
     @Mapping(target = "genWidth", source = ".", qualifiedByName = "dimensionToGenWidth")
     void updateVessel(@MappingTarget Vessel vessel, VesselUpdateDto vesselUpdateDto);
-
-
-    VesselResponseDto vesselToVesselResponseDto(Vessel vessel);
 
 
     default Timestamp map(Instant instant) {

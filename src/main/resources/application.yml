@@ -17,10 +17,24 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/liquibase/master.xml
+  jpa:
+    generate-ddl: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5435/directory_vessels
     username: postgres
     password: password
-
+    hikari:
+      auto-commit: true
+      driver-class-name: org.postgresql.Driver
+      maximum-pool-size: 10
+springdoc:
+  override-with-generic-response: true
+  writer-with-default-pretty-printer: true
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

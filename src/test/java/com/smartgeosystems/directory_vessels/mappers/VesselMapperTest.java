@@ -1,7 +1,6 @@
 package com.smartgeosystems.directory_vessels.mappers;
 
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
-import com.smartgeosystems.directory_vessels.dto.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ class VesselMapperTest {
     private final Double draught = 2.4;
     private final Instant packageTime = Instant.now();
 
-    private  Timestamp packageTimeTimestamp;
+    private Timestamp packageTimeTimestamp;
 
     private Timestamp etaTimestamp;
 
@@ -64,7 +63,7 @@ class VesselMapperTest {
                 .setPackageTime(packageTime)
                 .build();
 
-       vesselUpdateDto = VesselUpdateDto.builder()
+        vesselUpdateDto = VesselUpdateDto.builder()
                 .imo(imo)
                 .mmsi(mmsi)
                 .vesselName(vesselName)
@@ -177,70 +176,7 @@ class VesselMapperTest {
     }
 
     @Test
-    void vesselToVesselResponseDtoSuccessfulMappingTest() {
-        long time = new Date().getTime() - 10000;
-        final Long mmsi = 123456789881L;
-        final Long imo = 111111111L;
-        final Long mid = null;
-        final String vesselName = "vesselName";
-        final String callSign = "callSign";
-        final Long shipTypeId = 12356L;
-        final String destination = "destination";
-        final Timestamp eta = new Timestamp(time);
-        final Double dimensionToBowA = 2d;
-        final Double dimensionToSternB = 1.3;
-        final Double genLength = dimensionToBowA + dimensionToSternB;
-        final Double dimensionToPortC = 3d;
-        final Double dimensionToStarboardD = 4d;
-        final Double genWidth = this.dimensionToPortC + this.dimensionToStarboardD;
-        final Double draught = 3d;
-        final Timestamp packageTime = new Timestamp(time);
-        final boolean deleted = false;
-
-        var vessel = Vessel.builder()
-                .imo(imo)
-                .mmsi(mmsi)
-                .mid(mid)
-                .vesselName(vesselName)
-                .callSign(callSign)
-                .shipTypeId(shipTypeId)
-                .destination(destination)
-                .eta(eta)
-                .dimensionToBowA(dimensionToBowA)
-                .dimensionToSternB(dimensionToSternB)
-                .genLength(genLength)
-                .dimensionToPortC(dimensionToPortC)
-                .dimensionToStarboardD(dimensionToStarboardD)
-                .genWidth(genWidth)
-                .draught(draught)
-                .packageTime(packageTime)
-                .deleted(deleted)
-                .build();
-
-        VesselResponseDto vesselResponseDto = vesselMapper.vesselToVesselResponseDto(vessel);
-
-        assertAll("Group vessel mapper assertions",
-                () -> assertEquals(mmsi, vesselResponseDto.getMmsi(), "Mmsi must be moved!"),
-                () -> assertEquals(vesselName, vesselResponseDto.getVesselName(), "Vessel name must be moved!"),
-                () -> assertEquals(imo, vessel.getImo(), "Imo must be moved!"),
-                () -> assertEquals(callSign, vesselResponseDto.getCallSign(), "Call sign must be moved!"),
-                () -> assertEquals(shipTypeId, vesselResponseDto.getShipTypeId(), "Ship type id must be moved!"),
-                () -> assertEquals(destination, vesselResponseDto.getDestination(), "Destination must be moved!"),
-                () -> assertEquals(eta, vesselResponseDto.getEta(), "Eta must be moved!"),
-                () -> assertEquals(dimensionToBowA, vesselResponseDto.getDimensionToBowA(), "Dimension To Bow A must be moved!"),
-                () -> assertEquals(dimensionToSternB, vesselResponseDto.getDimensionToSternB(), "Dimension To Stern B must be moved!"),
-                () -> assertEquals(dimensionToPortC, vesselResponseDto.getDimensionToPortC(), "Dimension To Port C must be moved!"),
-                () -> assertEquals(dimensionToStarboardD, vesselResponseDto.getDimensionToStarboardD(), "Dimension To Starboard D must be moved!"),
-                () -> assertEquals(draught, vesselResponseDto.getDraught(), "Draught must be moved!"),
-                () -> assertEquals(packageTime, vesselResponseDto.getPackageTime(), "Package Time must be moved!"),
-                () -> assertEquals(genLength, vesselResponseDto.getGenLength(), "Gen length must be moved!!"),
-                () -> assertEquals(genWidth, vesselResponseDto.getGenWidth(), "Gen width must be moved!"),
-                () -> assertNull(vesselResponseDto.getMid(), "Mid must to be moved!")
-        );
-    }
-
-    @Test
-    void vesselUpdateDtoToVesselSuccessfulMappingTest(){
+    void vesselUpdateDtoToVesselSuccessfulMappingTest() {
 
         Vessel vessel = vesselMapper.vesselUpdateDtoToVessel(vesselUpdateDto);
         assertAll("Group vessel mapper assertions",
@@ -265,7 +201,7 @@ class VesselMapperTest {
     }
 
     @Test
-    void vesselRequestDtoToVesselSuccessfulMappingTest(){
+    void vesselRequestDtoToVesselSuccessfulMappingTest() {
         Date date = new Date();
         var time = new Timestamp(date.getTime());
         var vesselRequestDto = VesselRequestDto.builder()
@@ -307,7 +243,7 @@ class VesselMapperTest {
     }
 
     @Test
-    void updateVesselDtoToPersistVesselSuccessfulMappingTest(){
+    void updateVesselDtoToPersistVesselSuccessfulMappingTest() {
 
         long oldTime = new Date().getTime() - 10000;
         final Long oldMmsi = 123456789881L;
@@ -351,8 +287,6 @@ class VesselMapperTest {
                 .updateTime(oldUpdateTime)
                 .deleted(deleted)
                 .build();
-
-
 
 
         vesselMapper.updateVessel(oldVessel, vesselUpdateDto);
