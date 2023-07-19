@@ -4,7 +4,7 @@ import com.smartgeosystems.directory_vessels.dto.PageAndSortDto;
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
-import com.smartgeosystems.directory_vessels.mappers.VesselMapperResponse;
+import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapperResponse;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.services.vessels.VesselService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

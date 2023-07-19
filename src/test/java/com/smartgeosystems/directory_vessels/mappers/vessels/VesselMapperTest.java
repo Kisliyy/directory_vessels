@@ -1,7 +1,8 @@
-package com.smartgeosystems.directory_vessels.mappers;
+package com.smartgeosystems.directory_vessels.mappers.vessels;
 
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
+import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapper;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

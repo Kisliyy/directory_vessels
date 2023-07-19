@@ -4,7 +4,7 @@ import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
-import com.smartgeosystems.directory_vessels.mappers.VesselMapper;
+import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapper;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.repository.VesselRepository;
 import org.junit.jupiter.api.BeforeEach;

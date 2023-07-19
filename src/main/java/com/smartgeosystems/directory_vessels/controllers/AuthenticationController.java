@@ -6,6 +6,7 @@ import com.smartgeosystems.directory_vessels.dto.auth.RegisterDataRequest;
 import com.smartgeosystems.directory_vessels.services.authentication.AuthenticationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,8 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/api/auth/register")
+    @PostMapping(value = "/api/auth/register",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @SecurityRequirement(name = "Bearer authentication")
     public ResponseEntity<String> register(@RequestBody @Valid RegisterDataRequest registerDataRequest) {
         authenticationService.register(registerDataRequest);
@@ -27,7 +29,9 @@ public class AuthenticationController {
                 .ok("The user has been successfully created");
     }
 
-    @PostMapping("/api/auth/authentication")
+    @PostMapping(value = "/api/auth/authentication",
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResponse> authentication(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
         return ResponseEntity
                 .ok(authenticationService.authentication(authenticationRequest));

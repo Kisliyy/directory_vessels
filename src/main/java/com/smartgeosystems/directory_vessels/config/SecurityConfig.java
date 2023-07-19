@@ -1,7 +1,6 @@
 package com.smartgeosystems.directory_vessels.config;
 
 import com.smartgeosystems.directory_vessels.config.jwt.JwtAuthenticationFilter;
-import com.smartgeosystems.directory_vessels.models.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,15 +25,14 @@ public class SecurityConfig {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .antMatchers("/api/auth/authentication").permitAll()
-                                .antMatchers("/api/auth/register").hasRole(Role.ADMIN.name())
+                                .antMatchers("/api/auth/**").permitAll()
                                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

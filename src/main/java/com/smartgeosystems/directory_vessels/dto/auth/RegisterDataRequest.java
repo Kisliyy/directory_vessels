@@ -2,12 +2,15 @@ package com.smartgeosystems.directory_vessels.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.smartgeosystems.directory_vessels.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Min;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -20,19 +23,29 @@ public class RegisterDataRequest {
 
     @JsonProperty(value = "firstName")
     @NotNull
+    @NotEmpty
     private String firstName;
+
     @JsonProperty(value = "lastName")
     @NotNull
+    @NotEmpty
     private String lastName;
+
     @JsonProperty(value = "username")
     @NotNull
-    @Min(value = 5)
+    @NotEmpty
     private String username;
 
     @NotNull
-    @Min(value = 8)
-    @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\\\S+$)",
+    @NotEmpty
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
             message = "The password does not meet the conditions")
+    @JsonProperty(value = "password")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @JsonProperty(value = "role")
+    @NotNull
+    private Role role;
 
 }

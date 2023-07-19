@@ -5,36 +5,32 @@ import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationRequest;
 import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationResponse;
 import com.smartgeosystems.directory_vessels.dto.auth.RegisterDataRequest;
 import com.smartgeosystems.directory_vessels.exceptions.UserException;
+import com.smartgeosystems.directory_vessels.mappers.users.UserMapper;
 import com.smartgeosystems.directory_vessels.models.User;
-import com.smartgeosystems.directory_vessels.repository.UserRepository;
+import com.smartgeosystems.directory_vessels.services.users.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
 
+    private final UserMapper userMapper;
+
     @Override
     public void register(RegisterDataRequest registerDataRequest) {
-        var byUsername = userRepository.existsByUsername(registerDataRequest.getUsername());
+        var byUsername = userService.existsByUsername(registerDataRequest.getUsername());
         if (byUsername) {
             throw new UserException("User with this username already exists!");
         }
-        var buildUser = User.builder()
-                .username(registerDataRequest.getUsername())
-                .firstName(registerDataRequest.getFirstName())
-                .lastName(registerDataRequest.getLastName())
-                .password(passwordEncoder.encode(registerDataRequest.getPassword()))
-                .build();
-        userRepository.save(buildUser);
+        User buildUser = userMapper.registerDataToUser(registerDataRequest);
+        userService.save(buildUser);
     }
 
     @Override
@@ -45,8 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
         authenticationManager.authenticate(authenticationToken);
         final var username = authenticationRequest.getUsername();
-        var findUser = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserException("User not found by username: " + username));
+        var findUser = userService.findByUsername(username);
         String token = jwtProvider.generateToken(findUser);
         return new AuthenticationResponse(token);
     }
