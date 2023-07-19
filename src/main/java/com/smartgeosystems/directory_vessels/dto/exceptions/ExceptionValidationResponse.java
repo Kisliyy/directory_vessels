@@ -1,4 +1,4 @@
-package com.smartgeosystems.directory_vessels.dto;
+package com.smartgeosystems.directory_vessels.dto.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

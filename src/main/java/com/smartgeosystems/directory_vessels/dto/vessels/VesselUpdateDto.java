@@ -1,4 +1,4 @@
-package com.smartgeosystems.directory_vessels.dto;
+package com.smartgeosystems.directory_vessels.dto.vessels;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

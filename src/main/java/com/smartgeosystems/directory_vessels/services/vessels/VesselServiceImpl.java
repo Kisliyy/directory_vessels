@@ -1,7 +1,7 @@
 package com.smartgeosystems.directory_vessels.services.vessels;
 
-import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
-import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselRequestDto;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
 import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapper;

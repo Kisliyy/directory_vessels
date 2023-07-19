@@ -1,7 +1,7 @@
 package com.smartgeosystems.directory_vessels.controllers.handlers;
 
-import com.smartgeosystems.directory_vessels.dto.ExceptionMessageResponse;
-import com.smartgeosystems.directory_vessels.dto.ExceptionValidationResponse;
+import com.smartgeosystems.directory_vessels.dto.exceptions.ExceptionMessageResponse;
+import com.smartgeosystems.directory_vessels.dto.exceptions.ExceptionValidationResponse;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
 import org.springframework.http.HttpHeaders;

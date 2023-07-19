@@ -1,9 +1,8 @@
 package com.smartgeosystems.directory_vessels.controllers;
 
-import com.smartgeosystems.directory_vessels.dto.PageAndSortDto;
-import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
-import com.smartgeosystems.directory_vessels.dto.VesselResponseDto;
-import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselRequestDto;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselResponseDto;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapperResponse;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.services.vessels.VesselService;
@@ -17,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class VesselController {
     private final VesselService vesselService;
     private final VesselMapperResponse vesselMapperResponse = Mappers.getMapper(VesselMapperResponse.class);
 
-    @GetMapping(value = "/api/vessels/{imo}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/vessels/imo/{imo}")
     public ResponseEntity<VesselResponseDto> findByImo(@PathVariable("imo") long imo) {
         var vessel = vesselService.findByImo(imo);
         var responseDto = vesselMapperResponse.vesselToVesselResponseDto(vessel);
@@ -34,7 +34,7 @@ public class VesselController {
                 .ok(responseDto);
     }
 
-    @GetMapping(value = "/api/vessels/{mmsi}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/vessels/mmsi/{mmsi}")
     public ResponseEntity<VesselResponseDto> findByMmsi(@PathVariable("mmsi") long mmsi) {
         var vessel = vesselService.findByMmsi(mmsi);
         var responseDto = vesselMapperResponse.vesselToVesselResponseDto(vessel);
@@ -68,10 +68,10 @@ public class VesselController {
                 .build();
     }
 
-    @GetMapping(value = "/api/vessels/", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<Vessel>> findAll(@RequestBody @Valid PageAndSortDto pageAndSortDto) {
-        var page = PageRequest.of(pageAndSortDto.getPage(), pageAndSortDto.getSize());
-        return ResponseEntity
-                .ok(vesselService.findAll(page));
+    @GetMapping(value = "/api/vessels/")
+    public Page<Vessel> findAll(@RequestParam(name = "page") int page,
+                                @RequestParam(name = "size") @Min(value = 1) int size) {
+        var pageRequest = PageRequest.of(page, size);
+        return vesselService.findAll(pageRequest);
     }
 }

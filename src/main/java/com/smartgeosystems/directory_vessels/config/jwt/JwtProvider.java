@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +17,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
-
     private final JwtProperties jwtProperties;
-    private final Date expirationDate;
-
-    public JwtProvider(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
-        this.expirationDate = new Date(jwtProperties.getExpirationDate());
-    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -45,8 +40,8 @@ public class JwtProvider {
                 .builder()
                 .addClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(expirationDate)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expirationDate())
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -77,5 +72,9 @@ public class JwtProvider {
         var secretKey = jwtProperties.getSecretKey();
         return Keys
                 .hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private Date expirationDate() {
+        return new Date(System.currentTimeMillis() + jwtProperties.getExpirationDate());
     }
 }

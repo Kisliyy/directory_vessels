@@ -1,7 +1,6 @@
 package com.smartgeosystems.directory_vessels.mappers.vessels;
 
-import com.smartgeosystems.directory_vessels.dto.VesselResponseDto;
-import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapperResponse;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
