@@ -1,8 +1,10 @@
-package com.smartgeosystems.directory_vessels.services.vessel;
+package com.smartgeosystems.directory_vessels.services.vessels;
 
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.vmts.vessel.VesselInfo;
 
 public interface VesselService {
@@ -18,4 +20,7 @@ public interface VesselService {
     void updateVessel(VesselUpdateDto vesselUpdateDto);
 
     void deleteById(long imo);
+
+    Page<Vessel> findAll(Pageable page);
+
 }

@@ -1,4 +1,4 @@
-package com.smartgeosystems.directory_vessels.services.vessel;
+package com.smartgeosystems.directory_vessels.services.vessels;
 
 import com.smartgeosystems.directory_vessels.dto.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.VesselUpdateDto;

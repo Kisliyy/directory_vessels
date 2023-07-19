@@ -6,5 +6,6 @@
         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <includeAll path="db/liquibase/changelog/initial"/>
+    <includeAll path="db/liquibase/changelog/data"/>
 
 </databaseChangeLog>
