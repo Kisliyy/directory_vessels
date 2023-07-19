@@ -4,6 +4,7 @@ import com.smartgeosystems.directory_vessels.config.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,7 +28,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .antMatchers("/api/auth/**").permitAll()
+                                .antMatchers("/api/auth/register").hasRole("ADMIN")
+                                .antMatchers(HttpMethod.POST, "/api/auth/authentication").permitAll()
                                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
