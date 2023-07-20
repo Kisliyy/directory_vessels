@@ -1,6 +1,6 @@
 server:
   port: 8085
-
+---
 spring:
   application:
     name: directory_vessels
@@ -32,6 +32,10 @@ spring:
       auto-commit: true
       driver-class-name: org.postgresql.Driver
       maximum-pool-size: 10
+  output:
+    ansi:
+      enabled: detect
+---
 springdoc:
   override-with-generic-response: true
   writer-with-default-pretty-printer: true
@@ -41,6 +45,29 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+  show-actuator: true
+---
+logging:
+  file:
+    name: log/directory_vessels_log.log
+  level:
+    liquibase: INFO
+    org.springframework: INFO
+    org.apache: INFO
+    org.mapstruct: WARN
+    root: INFO
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, logfile, metrics, liquibase, shutdown
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: when_authorized
+      roles: ADMIN
+---
 jwt:
   secret_key:
   expiration_date:
