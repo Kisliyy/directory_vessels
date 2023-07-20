@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.vmts.vessel.VesselInfo;
 
 import java.util.Optional;
 
@@ -23,27 +22,6 @@ public class VesselServiceImpl implements VesselService {
 
     private final VesselRepository vesselRepository;
     private final VesselMapper vesselMapper;
-
-
-    @Override
-    @Transactional
-    public void processingVessel(VesselInfo vesselInfo) {
-        var mmsi = vesselInfo.getMmsi();
-        if (VesselUtils.isAton(mmsi)) {
-            return;
-        }
-        var imo = vesselInfo.getImo();
-        if (imo != null) {
-            Optional<Vessel> byId = vesselRepository.findByImo(imo);
-            if (byId.isEmpty()) {
-                Vessel vessel = createNewVessel(vesselInfo);
-                vesselRepository.save(vessel);
-                return;
-            }
-            Vessel vessel = byId.get();
-            updateVessel(vessel, vesselInfo);
-        }
-    }
 
     @Override
     @Transactional
@@ -65,6 +43,12 @@ public class VesselServiceImpl implements VesselService {
         return vesselRepository
                 .findByImo(imo)
                 .orElseThrow(() -> new NotFoundException("Vessel not found by imo: " + imo));
+    }
+
+    @Override
+    public Optional<Vessel> getByImo(long imo) {
+        return vesselRepository
+                .findByImo(imo);
     }
 
     @Override
@@ -99,23 +83,14 @@ public class VesselServiceImpl implements VesselService {
     }
 
     @Override
+    public Vessel save(Vessel vessel) {
+        return vesselRepository.save(vessel);
+    }
+
+    @Override
     public Page<Vessel> findAll(Pageable page) {
         return vesselRepository
                 .findAll(page);
     }
-
-
-    private void updateVessel(Vessel vessel, VesselInfo vesselInfo) {
-        var packageTimeVesselInfo = vesselInfo.getPackageTime();
-        var packageTimeVessel = vessel.getPackageTime();
-        if (VesselUtils.checkPackageTime(packageTimeVessel, packageTimeVesselInfo)) {
-            vesselMapper.updateVesselKafkaToVessel(vessel, vesselInfo);
-        }
-    }
-
-    private Vessel createNewVessel(VesselInfo vesselInfo) {
-        return vesselMapper.vesselKafkaToVessel(vesselInfo);
-    }
-
 
 }

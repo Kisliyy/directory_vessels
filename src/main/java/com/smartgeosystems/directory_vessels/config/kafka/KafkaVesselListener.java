@@ -1,6 +1,6 @@
 package com.smartgeosystems.directory_vessels.config.kafka;
 
-import com.smartgeosystems.directory_vessels.services.vessels.VesselService;
+import com.smartgeosystems.directory_vessels.services.proccess.ProcessService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -11,7 +11,7 @@ import org.vmts.vessel.VesselInfo;
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaVesselListener {
-    private final VesselService vesselService;
+    private final ProcessService processService;
 
     @KafkaListener(
             topics = "${spring.kafka.consumer.topics}",
@@ -25,7 +25,7 @@ public class KafkaVesselListener {
             return;
         }
         log.debug(vesselInfo.toString());
-        vesselService.processingVessel(vesselInfo);
+        processService.process(vesselInfo);
     }
 
 }

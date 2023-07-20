@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.vmts.vessel.VesselInfo;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -55,10 +54,6 @@ class VesselServiceImplTest {
 
     private Timestamp etaTimestamp;
 
-    private Timestamp creationTimestamp;
-
-    private VesselInfo vesselInfo;
-
     private Vessel vessel;
 
     private Vessel persistVessel;
@@ -67,23 +62,7 @@ class VesselServiceImplTest {
     void init() {
         packageTimeTimestamp = Timestamp.from(packageTime);
         etaTimestamp = Timestamp.from(eta);
-        creationTimestamp = Timestamp.from(Instant.now());
-
-        vesselInfo = VesselInfo.newBuilder()
-                .setMmsi(mmsi)
-                .setVesselName(vesselName)
-                .setCallSign(callSign)
-                .setImo(imo)
-                .setShipTypeId(shipTypeId)
-                .setDestination(destination)
-                .setEta(eta)
-                .setDimensionToBowA(dimensionToBowA)
-                .setDimensionToSternB(dimensionToSternB)
-                .setDimensionToPortC(dimensionToPortC)
-                .setDimensionToStarboardD(dimensionToStarboardD)
-                .setDraught(draught)
-                .setPackageTime(packageTime)
-                .build();
+        Timestamp creationTimestamp = Timestamp.from(Instant.now());
 
         vessel = Vessel.builder()
                 .mmsi(mmsi)
@@ -124,92 +103,6 @@ class VesselServiceImplTest {
                 .creationTime(creationTimestamp)
                 .build();
     }
-
-    @Test
-    void processingVesselKafkaCreateVesselTest() {
-        when(vesselRepository.findByImo(anyLong()))
-                .thenReturn(Optional.empty());
-
-        when(vesselMapper.vesselKafkaToVessel(any(VesselInfo.class)))
-                .thenReturn(vessel);
-
-        when(vesselRepository.save(vessel))
-                .thenReturn(persistVessel);
-
-        vesselService.processingVessel(vesselInfo);
-
-        verify(vesselRepository, times(1)).findByImo(anyLong());
-        verify(vesselRepository, times(1)).save(vessel);
-        verify(vesselMapper, times(1)).vesselKafkaToVessel(any(VesselInfo.class));
-    }
-
-    @Test
-    void processingVesselKafkaIsAtonTest() {
-        var mmsi = 999123456L;
-        VesselInfo vesselInfo = new VesselInfo();
-        vesselInfo.setMmsi(mmsi);
-
-        vesselService.processingVessel(vesselInfo);
-
-        verify(vesselRepository, times(0)).findByImo(anyLong());
-        verify(vesselRepository, times(0)).save(any());
-        verify(vesselMapper, times(0)).vesselKafkaToVessel(any());
-    }
-
-    @Test
-    void processingVesselKafkaUpdateVesselWhereOldPackageTimeTest() {
-        when(vesselRepository.findByImo(vesselInfo.getImo()))
-                .thenReturn(Optional.of(persistVessel));
-
-        vesselService.processingVessel(vesselInfo);
-
-
-        verify(vesselRepository, times(1)).findByImo(vesselInfo.getImo());
-        verify(vesselRepository, times(0)).save(any());
-        verify(vesselMapper, times(0)).updateVesselKafkaToVessel(persistVessel, vesselInfo);
-    }
-
-
-    @Test
-    void processingVesselKafkaUpdateVesselWhereNewPackageTimeTest() {
-        Date date = new Date();
-        var oldPackageTime = new Timestamp(date.getTime() - 10000);
-
-        var oldVessel = Vessel.builder()
-                .mmsi(mmsi)
-                .imo(imo)
-                .deleted(false)
-                .packageTime(oldPackageTime)
-                .creationTime(creationTimestamp)
-                .draught(draught)
-                .build();
-
-        when(vesselRepository.findByImo(vesselInfo.getImo()))
-                .thenReturn(Optional.of(oldVessel));
-
-        doNothing()
-                .when(vesselMapper)
-                .updateVesselKafkaToVessel(oldVessel, vesselInfo);
-
-        vesselService.processingVessel(vesselInfo);
-
-        verify(vesselRepository, times(1)).findByImo(vesselInfo.getImo());
-        verify(vesselRepository, times(0)).save(any());
-    }
-
-
-    @Test
-    void processingVesselKafkaWhereImoIsNullTest() {
-        Long imo = null;
-        VesselInfo vesselInfo = new VesselInfo();
-        vesselInfo.setImo(imo);
-
-        vesselService.processingVessel(vesselInfo);
-
-        verify(vesselRepository, times(0)).findByImo(anyLong());
-        verify(vesselRepository, times(0)).save(any());
-    }
-
 
     @Test
     void processingVesselRequestDtoIsAtonTest() {

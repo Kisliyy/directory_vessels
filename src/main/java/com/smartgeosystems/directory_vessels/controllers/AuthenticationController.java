@@ -4,7 +4,6 @@ import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationRequest;
 import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationResponse;
 import com.smartgeosystems.directory_vessels.dto.auth.RegisterDataRequest;
 import com.smartgeosystems.directory_vessels.services.authentication.AuthenticationService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

@@ -5,21 +5,24 @@ import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.vmts.vessel.VesselInfo;
+
+import java.util.Optional;
 
 public interface VesselService {
-
-    void processingVessel(VesselInfo vesselInfo);
 
     Vessel processingVessel(VesselRequestDto vesselRequestDto);
 
     Vessel findByImo(long imo);
+
+    Optional<Vessel> getByImo(long imo);
 
     Vessel findByMmsi(long mmsi);
 
     void updateVessel(VesselUpdateDto vesselUpdateDto);
 
     void deleteById(long imo);
+
+    Vessel save(Vessel vessel);
 
     Page<Vessel> findAll(Pageable page);
 
