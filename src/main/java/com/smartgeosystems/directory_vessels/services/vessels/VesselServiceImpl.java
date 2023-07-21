@@ -1,7 +1,6 @@
 package com.smartgeosystems.directory_vessels.services.vessels;
 
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselRequestDto;
-import com.smartgeosystems.directory_vessels.dto.vessels.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
@@ -10,6 +9,7 @@ import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.repository.VesselRepository;
 import com.smartgeosystems.directory_vessels.utils.VesselUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VesselServiceImpl implements VesselService {
 
     private final VesselRepository vesselRepository;
@@ -69,11 +70,13 @@ public class VesselServiceImpl implements VesselService {
             var vessel = byImo.get();
             if (VesselUtils.checkPackageTime(vessel.getPackageTime(), vesselUpdateDto.getPackageTime())) {
                 vesselMapper.updateVessel(vessel, vesselUpdateDto);
+                log.info("The vessel has been updated: {}", vessel);
             }
             return;
         }
         Vessel vessel = vesselMapper.vesselUpdateDtoToVessel(vesselUpdateDto);
-        vesselRepository.save(vessel);
+        Vessel persistVessel = vesselRepository.save(vessel);
+        log.info("Add new vessel: {}", persistVessel);
     }
 
     @Override
@@ -81,6 +84,7 @@ public class VesselServiceImpl implements VesselService {
     public void deleteById(long imo) {
         if (vesselRepository.existsById(imo)) {
             vesselRepository.updateDelete(imo, true);
+            log.info("Vessel deleted with imo: {}", imo);
         }
     }
 

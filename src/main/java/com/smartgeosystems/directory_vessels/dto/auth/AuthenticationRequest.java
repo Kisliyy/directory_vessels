@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -15,10 +16,14 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticationRequest {
+
     @NotNull
+    @NotEmpty
     @JsonProperty(value = "username")
     private String username;
+
     @JsonProperty(value = "password")
     @NotNull
+    @NotEmpty
     private String password;
 }

@@ -3,6 +3,7 @@ package com.smartgeosystems.directory_vessels.controllers.handlers;
 import com.smartgeosystems.directory_vessels.dto.exceptions.ExceptionMessageResponse;
 import com.smartgeosystems.directory_vessels.dto.exceptions.ExceptionValidationResponse;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
+import com.smartgeosystems.directory_vessels.exceptions.UserException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ import java.util.Map;
 @ControllerAdvice
 public class NativeExceptionHandler {
 
-    @ExceptionHandler(value = {NotFoundException.class, VesselException.class})
+    @ExceptionHandler(value = {NotFoundException.class, VesselException.class, UserException.class})
     public ResponseEntity<ExceptionMessageResponse> handleNotFoundExceptionAndVesselException(RuntimeException exception) {
         return ResponseEntity
                 .badRequest()
@@ -29,7 +30,7 @@ public class NativeExceptionHandler {
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public ResponseEntity<ExceptionValidationResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         Map<String, List<String>> errors = new HashMap<>();
         exception
                 .getBindingResult()

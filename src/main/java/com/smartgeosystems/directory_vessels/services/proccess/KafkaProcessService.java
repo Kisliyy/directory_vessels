@@ -5,6 +5,7 @@ import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.services.vessels.VesselService;
 import com.smartgeosystems.directory_vessels.utils.VesselUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaProcessService implements ProcessService {
 
     private final VesselService vesselService;
@@ -35,19 +37,22 @@ public class KafkaProcessService implements ProcessService {
             Optional<Vessel> byId = vesselService.getByImo(imo);
             if (byId.isEmpty()) {
                 Vessel vessel = createNewVessel(vesselInfo);
-                vesselService.save(vessel);
+                Vessel persistVessel = vesselService.save(vessel);
+                log.info("Add new vessel: {}", persistVessel);
                 return;
             }
-            Vessel vessel = byId.get();
+            var vessel = byId.get();
             updateVessel(vessel, vesselInfo);
+            log.info("The vessel has been updated: {}", vessel);
         }
     }
 
     @Recover
     @Transactional
-    public void recoverVessel(SQLException exception, VesselInfo vesselInfo){
+    public void recoverVessel(SQLException exception, VesselInfo vesselInfo) {
         var findVessel = vesselService.findByImo(vesselInfo.getImo());
         updateVessel(findVessel, vesselInfo);
+        log.info("The vessel has been updated: {}", findVessel);
     }
 
     private Vessel createNewVessel(VesselInfo vesselInfo) {
