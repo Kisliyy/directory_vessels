@@ -24,7 +24,7 @@ import javax.validation.constraints.Min;
 public class VesselController {
 
     private final VesselService vesselService;
-    private final VesselMapperResponse vesselMapperResponse = Mappers.getMapper(VesselMapperResponse.class);
+    private final VesselMapperResponse vesselMapperResponse;
 
     @GetMapping(value = "/api/vessels/imo/{imo}")
     public ResponseEntity<VesselResponseDto> findByImo(@PathVariable("imo") long imo) {
@@ -69,9 +69,11 @@ public class VesselController {
     }
 
     @GetMapping(value = "/api/vessels/")
-    public Page<Vessel> findAll(@RequestParam(name = "page") int page,
+    public Page<VesselResponseDto> findAll(@RequestParam(name = "page") int page,
                                 @RequestParam(name = "size") @Min(value = 1) int size) {
         var pageRequest = PageRequest.of(page, size);
-        return vesselService.findAll(pageRequest);
+        return vesselService
+                .findAll(pageRequest)
+                .map(vesselMapperResponse::vesselToVesselResponseDto);
     }
 }

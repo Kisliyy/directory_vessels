@@ -1,6 +1,7 @@
 package com.smartgeosystems.directory_vessels.services.vessels;
 
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselRequestDto;
+import com.smartgeosystems.directory_vessels.dto.vessels.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.exceptions.NotFoundException;
 import com.smartgeosystems.directory_vessels.exceptions.VesselException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -83,6 +85,7 @@ public class VesselServiceImpl implements VesselService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Vessel save(Vessel vessel) {
         return vesselRepository.save(vessel);
     }

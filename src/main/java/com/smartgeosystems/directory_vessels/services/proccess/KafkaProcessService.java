@@ -5,10 +5,14 @@ import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.services.vessels.VesselService;
 import com.smartgeosystems.directory_vessels.utils.VesselUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.vmts.vessel.VesselInfo;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -19,7 +23,8 @@ public class KafkaProcessService implements ProcessService {
     private final VesselKafkaMapper vesselKafkaMapper;
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Retryable(maxAttempts = 2, value = SQLException.class, recover = "recoverVessel")
     public void process(VesselInfo vesselInfo) {
         var mmsi = vesselInfo.getMmsi();
         if (VesselUtils.isAton(mmsi)) {
@@ -36,6 +41,13 @@ public class KafkaProcessService implements ProcessService {
             Vessel vessel = byId.get();
             updateVessel(vessel, vesselInfo);
         }
+    }
+
+    @Recover
+    @Transactional
+    public void recoverVessel(SQLException exception, VesselInfo vesselInfo){
+        var findVessel = vesselService.findByImo(vesselInfo.getImo());
+        updateVessel(findVessel, vesselInfo);
     }
 
     private Vessel createNewVessel(VesselInfo vesselInfo) {
