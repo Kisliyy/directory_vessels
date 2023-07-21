@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationRequest;
 import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationResponse;
+import com.smartgeosystems.directory_vessels.dto.auth.RegisterDataRequest;
+import com.smartgeosystems.directory_vessels.models.Role;
 import com.smartgeosystems.directory_vessels.services.authentication.AuthenticationService;
 import org.aspectj.lang.annotation.Before;
 import org.hamcrest.Matchers;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebM
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -25,6 +28,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -76,6 +80,42 @@ class AuthenticationControllerTest {
                 .andExpect(jsonPath("$.token", Matchers.is(token)));
 
         verify(authenticationService, times(1)).authentication(request);
+    }
+
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void registrationOfANewUserByTheAdministrator() throws Exception {
+        final var firstName = "firstName";
+        final var lastName = "lastName";
+        final var username = "username";
+        final var password = "Masd1*/qwe2";
+        final var role = Role.USER;
+
+        var registerRequest = RegisterDataRequest.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .username(username)
+                .password(password)
+                .role(role)
+                .build();
+
+
+        doNothing()
+                .when(authenticationService)
+                .register(registerRequest);
+
+        mockMvc
+                .perform(
+                        post("/api/auth/register")
+                                .content(objectToJson(registerRequest))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", Matchers.is("The user has been successfully created")));
+
+        verify(authenticationService, times(1)).register(registerRequest);
     }
 
     private String objectToJson(Object object) throws JsonProcessingException {

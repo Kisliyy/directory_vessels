@@ -3,6 +3,7 @@ package com.smartgeosystems.directory_vessels.controllers;
 import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationRequest;
 import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationResponse;
 import com.smartgeosystems.directory_vessels.dto.auth.RegisterDataRequest;
+import com.smartgeosystems.directory_vessels.dto.auth.RegisterResponse;
 import com.smartgeosystems.directory_vessels.services.authentication.AuthenticationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,10 @@ public class AuthenticationController {
 
     @PostMapping(value = "/api/auth/register",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterDataRequest registerDataRequest) {
+    public ResponseEntity<RegisterResponse> register(@RequestBody @Valid RegisterDataRequest registerDataRequest) {
         authenticationService.register(registerDataRequest);
         return ResponseEntity
-                .ok("The user has been successfully created");
+                .ok(new RegisterResponse("The user has been successfully created"));
     }
 
     @PostMapping(value = "/api/auth/authentication",
