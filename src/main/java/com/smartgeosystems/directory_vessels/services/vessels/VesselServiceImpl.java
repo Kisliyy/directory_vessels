@@ -10,6 +10,10 @@ import com.smartgeosystems.directory_vessels.repository.VesselRepository;
 import com.smartgeosystems.directory_vessels.utils.VesselUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,7 @@ public class VesselServiceImpl implements VesselService {
 
     @Override
     @Transactional
+    @CachePut(value = "vessels", key = "#vesselRequestDto.imo")
     public Vessel processingVessel(VesselRequestDto vesselRequestDto) {
         if (VesselUtils.isAton(vesselRequestDto.getMmsi())) {
             throw new VesselException("The data obtained indicate that this is aton");
@@ -42,6 +47,7 @@ public class VesselServiceImpl implements VesselService {
     }
 
     @Override
+    @Cacheable(value = "vessels")
     public Vessel findByImo(long imo) {
         return vesselRepository
                 .findByImo(imo)
@@ -49,12 +55,14 @@ public class VesselServiceImpl implements VesselService {
     }
 
     @Override
+    @Cacheable(value = "vessels")
     public Optional<Vessel> getByImo(long imo) {
         return vesselRepository
                 .findByImo(imo);
     }
 
     @Override
+    @Cacheable(value = "vessels")
     public Vessel findByMmsi(long mmsi) {
         return vesselRepository
                 .findByMmsi(mmsi)
@@ -63,6 +71,7 @@ public class VesselServiceImpl implements VesselService {
 
     @Override
     @Transactional
+    @CachePut(value = "vessels", key = "#vesselUpdateDto.imo")
     public void updateVessel(VesselUpdateDto vesselUpdateDto) {
         var imo = vesselUpdateDto.getImo();
         Optional<Vessel> byImo = vesselRepository.findByImo(imo);
@@ -81,6 +90,7 @@ public class VesselServiceImpl implements VesselService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "vessels")
     public void deleteById(long imo) {
         if (vesselRepository.existsById(imo)) {
             vesselRepository.updateDelete(imo, true);
@@ -90,6 +100,7 @@ public class VesselServiceImpl implements VesselService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @CachePut(value = "vessels", key = "#vessel.imo")
     public Vessel save(Vessel vessel) {
         return vesselRepository.save(vessel);
     }

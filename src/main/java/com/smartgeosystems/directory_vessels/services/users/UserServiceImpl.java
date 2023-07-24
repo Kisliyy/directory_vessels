@@ -4,6 +4,10 @@ import com.smartgeosystems.directory_vessels.exceptions.UserException;
 import com.smartgeosystems.directory_vessels.models.User;
 import com.smartgeosystems.directory_vessels.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Cacheable(value = "vessel_users")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var findUser = userRepository.findByUsername(username);
         if (findUser.isPresent()) {
@@ -30,6 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "vessel_users")
     public User findByUsername(String username) {
         return userRepository
                 .findByUsername(username)
@@ -37,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CachePut(value = "vessel_users", key = "#createUser.username")
     public User save(User createUser) {
         return userRepository.save(createUser);
     }
