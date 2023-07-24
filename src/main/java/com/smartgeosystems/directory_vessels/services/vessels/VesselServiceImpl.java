@@ -10,7 +10,6 @@ import com.smartgeosystems.directory_vessels.repository.VesselRepository;
 import com.smartgeosystems.directory_vessels.utils.VesselUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
