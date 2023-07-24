@@ -2,10 +2,15 @@ package com.smartgeosystems.directory_vessels.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smartgeosystems.directory_vessels.config.jwt.JwtProvider;
 import com.smartgeosystems.directory_vessels.config.kafka.KafkaVesselListener;
+import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationRequest;
+import com.smartgeosystems.directory_vessels.dto.auth.AuthenticationResponse;
 import com.smartgeosystems.directory_vessels.dto.auth.RegisterDataRequest;
 import com.smartgeosystems.directory_vessels.models.Role;
+import com.smartgeosystems.directory_vessels.models.User;
 import com.smartgeosystems.directory_vessels.services.authentication.AuthenticationService;
+import com.smartgeosystems.directory_vessels.services.users.UserService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,35 +31,38 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.Filter;
 import java.nio.charset.Charset;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @SpringBootTest
 @AutoConfigureCache
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc
 @WebAppConfiguration
-class AuthenticationControllerTest {
+@ActiveProfiles("test")
+public class IntegrationAuthenticationTest {
 
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private Filter springSecurityFilterChain;
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
+    private JwtProvider jwtProvider;
     @Autowired
-    private ObjectMapper objectMapper;
-
+    private UserService userService;
     private MockMvc mockMvc;
 
-
-    @MockBean
-    private KafkaVesselListener kafkaVesselListener;
     @MockBean
     private AuthenticationService authenticationService;
+    @MockBean
+    private KafkaVesselListener kafkaVesselListener;
 
     @BeforeEach
     void init() {
@@ -65,8 +74,34 @@ class AuthenticationControllerTest {
 
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    void registrationOfANewUserByTheAdministrator() throws Exception {
+    void authenticationOfTheCreatedUser() throws Exception {
+        var token = "token";
+        var response = new AuthenticationResponse(token);
+
+        var username = "username";
+        var password = "password";
+        var request = new AuthenticationRequest(username, password);
+
+        when(authenticationService.authentication(eq(request)))
+                .thenReturn(response);
+
+        mockMvc
+                .perform(
+                        post("/api/auth/authentication")
+                                .content(objectToJson(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .characterEncoding(Charset.defaultCharset())
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.token", Matchers.is(token)));
+
+        verify(authenticationService, times(1)).authentication(request);
+    }
+
+
+    @Test
+    void registrationOfANewUser() throws Exception {
         final var firstName = "firstName";
         final var lastName = "lastName";
         final var username = "username";
@@ -81,6 +116,8 @@ class AuthenticationControllerTest {
                 .role(role)
                 .build();
 
+        final User admin = userService.findByUsername("admin");
+        final String token = jwtProvider.generateToken(admin);
 
         doNothing()
                 .when(authenticationService)
@@ -89,6 +126,7 @@ class AuthenticationControllerTest {
         mockMvc
                 .perform(
                         post("/api/auth/register")
+                                .header("Authorization", "Bearer " + token)
                                 .content(objectToJson(registerRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .characterEncoding(Charset.defaultCharset())
@@ -105,3 +143,4 @@ class AuthenticationControllerTest {
         return objectMapper.writeValueAsString(object);
     }
 }
+

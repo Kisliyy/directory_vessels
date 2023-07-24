@@ -7,7 +7,12 @@
       http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.5.xsd">
 
     <changeSet id="2023-07-19--add-sequence-users" author="kiselev">
-        <sql>CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1</sql>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="hibernate_sequence"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="hibernate_sequence" startValue="2"/>
     </changeSet>
 
 </databaseChangeLog>

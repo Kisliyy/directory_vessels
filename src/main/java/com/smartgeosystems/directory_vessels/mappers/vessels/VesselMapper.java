@@ -4,12 +4,9 @@ import com.smartgeosystems.directory_vessels.dto.vessels.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.utils.MIDUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface VesselMapper {
 
     @Mapping(target = "creationTime", ignore = true)

@@ -2,16 +2,13 @@ package com.smartgeosystems.directory_vessels.mappers.vessels;
 
 import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.utils.MIDUtils;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 import org.vmts.vessel.VesselInfo;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface VesselKafkaMapper {
 
     @Mapping(target = "eta")

@@ -29,9 +29,10 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .antMatchers("/api/auth/register").hasAnyAuthority(Role.ADMIN.name())
-                                .antMatchers(HttpMethod.POST, "/api/auth/authentication").permitAll()
-                                .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html").permitAll()
+                                .mvcMatchers("/api/auth/register").hasAnyRole(Role.ADMIN.name())
+                                .mvcMatchers("/actuator").hasAnyRole(Role.ADMIN.name())
+                                .mvcMatchers(HttpMethod.POST, "/api/auth/authentication").permitAll()
+                                .mvcMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

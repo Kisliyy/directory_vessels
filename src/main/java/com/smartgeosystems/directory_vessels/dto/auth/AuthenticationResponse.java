@@ -1,12 +1,10 @@
 package com.smartgeosystems.directory_vessels.dto.auth;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
