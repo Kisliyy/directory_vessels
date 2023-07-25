@@ -58,12 +58,14 @@ public class KafkaProcessService implements ProcessService {
     }
 
     private void updateVessel(Vessel vessel, VesselInfo vesselInfo) {
-        var packageTimeVesselInfo = vesselInfo.getPackageTime();
-        var packageTimeVessel = vessel.getPackageTime();
-        if (VesselUtils.checkPackageTime(packageTimeVessel, packageTimeVesselInfo)) {
-            vesselKafkaMapper.updateVesselKafkaToVessel(vessel, vesselInfo);
-            vesselService.save(vessel);
-            log.info("The vessel has been updated: {}", vessel);
+        if (!vessel.isDeleted()) {
+            var packageTimeVesselInfo = vesselInfo.getPackageTime();
+            var packageTimeVessel = vessel.getPackageTime();
+            if (VesselUtils.checkPackageTime(packageTimeVessel, packageTimeVesselInfo)) {
+                vesselKafkaMapper.updateVesselKafkaToVessel(vessel, vesselInfo);
+                vesselService.save(vessel);
+                log.info("The vessel has been updated: {}", vessel);
+            }
         }
     }
 }

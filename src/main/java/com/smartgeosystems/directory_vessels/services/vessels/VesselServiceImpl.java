@@ -61,7 +61,7 @@ public class VesselServiceImpl implements VesselService {
     @Cacheable(value = "vessels_imo")
     public Optional<Vessel> getByImo(long imo) {
         return vesselRepository
-                .findByImo(imo);
+                .findById(imo);
     }
 
     @Override

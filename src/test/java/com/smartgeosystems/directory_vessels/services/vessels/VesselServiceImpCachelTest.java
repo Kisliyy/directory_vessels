@@ -96,7 +96,7 @@ class VesselServiceImpCachelTest {
 
         Optional<Vessel> optionalVessel = Optional.of(vessel);
 
-        when(vesselRepository.findByImo(imo))
+        when(vesselRepository.findById(imo))
                 .thenReturn(optionalVessel);
 
         Optional<Vessel> byImo = vesselService.getByImo(imo);
@@ -121,13 +121,13 @@ class VesselServiceImpCachelTest {
 
         final Optional<Vessel> optionalVessel = Optional.of(vessel);
 
-        when(vesselRepository.findByImo(imo))
+        when(vesselRepository.findById(imo))
                 .thenReturn(optionalVessel, any());
 
         vesselService.getByImo(imo);
         vesselService.getByImo(imo);
 
-        verify(vesselRepository, times(1)).findByImo(imo);
+        verify(vesselRepository, times(1)).findById(imo);
     }
 
 
