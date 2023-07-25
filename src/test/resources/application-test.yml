@@ -13,3 +13,8 @@ spring:
     contexts: test
 jwt:
   secret-key: qweqweasdfaasdqwerwqerfeasrwject42363
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework: DEBUG

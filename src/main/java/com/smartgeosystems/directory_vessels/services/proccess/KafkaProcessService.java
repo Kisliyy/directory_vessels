@@ -43,7 +43,6 @@ public class KafkaProcessService implements ProcessService {
             }
             var vessel = byId.get();
             updateVessel(vessel, vesselInfo);
-            log.info("The vessel has been updated: {}", vessel);
         }
     }
 
@@ -52,7 +51,6 @@ public class KafkaProcessService implements ProcessService {
     public void recoverVessel(SQLException exception, VesselInfo vesselInfo) {
         var findVessel = vesselService.findByImo(vesselInfo.getImo());
         updateVessel(findVessel, vesselInfo);
-        log.info("The vessel has been updated: {}", findVessel);
     }
 
     private Vessel createNewVessel(VesselInfo vesselInfo) {
@@ -64,6 +62,8 @@ public class KafkaProcessService implements ProcessService {
         var packageTimeVessel = vessel.getPackageTime();
         if (VesselUtils.checkPackageTime(packageTimeVessel, packageTimeVesselInfo)) {
             vesselKafkaMapper.updateVesselKafkaToVessel(vessel, vesselInfo);
+            vesselService.save(vessel);
+            log.info("The vessel has been updated: {}", vessel);
         }
     }
 }

@@ -11,8 +11,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "vessels_users")

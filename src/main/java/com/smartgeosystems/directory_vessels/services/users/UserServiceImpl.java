@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -17,9 +19,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    @Cacheable(value = "vessel_users")
+    @Cacheable(cacheNames = "vessel_users")
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var findUser = userRepository.findByUsername(username);
+        Optional<User> findUser = userRepository.findByUsername(username);
         if (findUser.isPresent()) {
             return findUser.get();
         }
@@ -33,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable(value = "vessel_users")
+    @Cacheable(cacheNames = "vessel_users")
     public User findByUsername(String username) {
         return userRepository
                 .findByUsername(username)
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @CachePut(value = "vessel_users", key = "#createUser.username")
+    @CachePut(cacheNames = "vessel_users", key = "#createUser.username")
     public User save(User createUser) {
         return userRepository.save(createUser);
     }

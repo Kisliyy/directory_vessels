@@ -188,7 +188,7 @@ class KafkaProcessServiceTest {
         processService.process(vesselInfo);
 
         verify(vesselService, times(1)).getByImo(vesselInfo.getImo());
-        verify(vesselService, times(0)).save(any());
+        verify(vesselService, times(1)).save(oldVessel);
     }
 
 
