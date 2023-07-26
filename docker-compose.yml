@@ -1,0 +1,23 @@
+version: '3.5'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    env_file:
+      - directory_vessels_env.env
+    container_name: "directory_vessels_app"
+  postgres:
+    image: "postgres:11"
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=book_storage_db
+    container_name: "directory_vessels_db"

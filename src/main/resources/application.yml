@@ -49,13 +49,18 @@ springdoc:
 ---
 logging:
   file:
-    name: log/directory_vessels_log.log
+    name: log/prod/directory_vessels_log.log
   level:
     liquibase: INFO
     org.springframework: INFO
     org.apache: INFO
     org.mapstruct: WARN
     root: INFO
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 5
+      clean-history-on-start: false
 ---
 management:
   endpoints:
