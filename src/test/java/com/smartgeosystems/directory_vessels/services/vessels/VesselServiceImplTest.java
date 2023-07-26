@@ -267,12 +267,12 @@ class VesselServiceImplTest {
                 .packageTime(packageTimeTimestamp)
                 .build();
 
-        when(vesselRepository.findByImo(vesselUpdateDto.getImo()))
+        when(vesselRepository.findById(vesselUpdateDto.getImo()))
                 .thenReturn(Optional.of(persistVessel));
 
-        vesselService.updateVessel(vesselUpdateDto);
+        assertThrows(VesselException.class, () -> vesselService.updateVessel(vesselUpdateDto));
 
-        verify(vesselRepository, times(1)).findByImo(vesselUpdateDto.getImo());
+        verify(vesselRepository, times(1)).findById(vesselUpdateDto.getImo());
         verify(vesselMapper, times(0)).updateVessel(any(), any());
         verify(vesselMapper, times(0)).vesselUpdateDtoToVessel(any());
         verify(vesselRepository, times(0)).save(any());
@@ -300,7 +300,7 @@ class VesselServiceImplTest {
                 .packageTime(updatePackageTime)
                 .build();
 
-        when(vesselRepository.findByImo(vesselUpdateDto.getImo()))
+        when(vesselRepository.findById(vesselUpdateDto.getImo()))
                 .thenReturn(Optional.of(persistVessel));
 
         doNothing()
@@ -310,7 +310,7 @@ class VesselServiceImplTest {
 
         vesselService.updateVessel(vesselUpdateDto);
 
-        verify(vesselRepository, times(1)).findByImo(vesselUpdateDto.getImo());
+        verify(vesselRepository, times(1)).findById(vesselUpdateDto.getImo());
         verify(vesselMapper, times(1)).updateVessel(persistVessel, vesselUpdateDto);
         verify(vesselMapper, times(0)).vesselUpdateDtoToVessel(any());
         verify(vesselRepository, times(0)).save(any());
@@ -338,7 +338,7 @@ class VesselServiceImplTest {
                 .packageTime(updatePackageTime)
                 .build();
 
-        when(vesselRepository.findByImo(vesselUpdateDto.getImo()))
+        when(vesselRepository.findById(vesselUpdateDto.getImo()))
                 .thenReturn(Optional.empty());
 
         when(vesselMapper.vesselUpdateDtoToVessel(vesselUpdateDto))
@@ -349,7 +349,7 @@ class VesselServiceImplTest {
 
         vesselService.updateVessel(vesselUpdateDto);
 
-        verify(vesselRepository, times(1)).findByImo(vesselUpdateDto.getImo());
+        verify(vesselRepository, times(1)).findById(vesselUpdateDto.getImo());
         verify(vesselMapper, times(0)).updateVessel(any(), any());
         verify(vesselMapper, times(1)).vesselUpdateDtoToVessel(vesselUpdateDto);
         verify(vesselRepository, times(1)).save(vessel);

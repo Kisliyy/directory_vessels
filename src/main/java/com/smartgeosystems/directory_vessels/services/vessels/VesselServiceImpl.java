@@ -78,20 +78,25 @@ public class VesselServiceImpl implements VesselService {
             @CachePut(value = "vessels_imo", key = "#vesselUpdateDto.imo"),
             @CachePut(value = "vessels_mmsi", key = "#vesselUpdateDto.mmsi")
     })
-    public void updateVessel(VesselUpdateDto vesselUpdateDto) {
+    public Vessel updateVessel(VesselUpdateDto vesselUpdateDto) {
         var imo = vesselUpdateDto.getImo();
-        Optional<Vessel> byImo = vesselRepository.findByImo(imo);
+        Optional<Vessel> byImo = vesselRepository.findById(imo);
         if (byImo.isPresent()) {
             var vessel = byImo.get();
-            if (VesselUtils.checkPackageTime(vessel.getPackageTime(), vesselUpdateDto.getPackageTime())) {
-                vesselMapper.updateVessel(vessel, vesselUpdateDto);
-                log.info("The vessel has been updated: {}", vessel);
+            if (!vessel.isDeleted()) {
+                if (VesselUtils.checkPackageTime(vessel.getPackageTime(), vesselUpdateDto.getPackageTime())) {
+                    vesselMapper.updateVessel(vessel, vesselUpdateDto);
+                    log.info("The vessel has been updated: {}", vessel);
+                    return vessel;
+                }
+                throw new VesselException("Error when comparing package time");
             }
-            return;
+            throw new VesselException("The vessel you want to upgrade has been deleted");
         }
         Vessel vessel = vesselMapper.vesselUpdateDtoToVessel(vesselUpdateDto);
         Vessel persistVessel = vesselRepository.save(vessel);
         log.info("Add new vessel: {}", persistVessel);
+        return persistVessel;
     }
 
     @Override

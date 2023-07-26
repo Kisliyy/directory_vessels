@@ -6,6 +6,7 @@ import com.smartgeosystems.directory_vessels.dto.vessels.VesselRequestDto;
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselResponseDto;
 import com.smartgeosystems.directory_vessels.dto.vessels.VesselUpdateDto;
 import com.smartgeosystems.directory_vessels.mappers.vessels.VesselMapperResponse;
+import com.smartgeosystems.directory_vessels.models.Vessel;
 import com.smartgeosystems.directory_vessels.services.vessels.VesselService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -133,11 +134,11 @@ public class VesselController {
             )
     })
     @PutMapping(value = "/api/vessels/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateVessel(@RequestBody @Valid VesselUpdateDto vesselUpdateDto) {
-        vesselService.updateVessel(vesselUpdateDto);
+    public ResponseEntity<VesselResponseDto> updateVessel(@RequestBody @Valid VesselUpdateDto vesselUpdateDto) {
+        Vessel vessel = vesselService.updateVessel(vesselUpdateDto);
+        var vesselResponseDto = vesselMapperResponse.vesselToVesselResponseDto(vessel);
         return ResponseEntity
-                .ok()
-                .build();
+                .ok(vesselResponseDto);
     }
 
     @Operation(summary = "Find all vessel")

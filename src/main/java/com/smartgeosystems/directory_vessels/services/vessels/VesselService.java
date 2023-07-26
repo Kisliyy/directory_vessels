@@ -18,7 +18,7 @@ public interface VesselService {
 
     Vessel findByMmsi(long mmsi);
 
-    void updateVessel(VesselUpdateDto vesselUpdateDto);
+    Vessel updateVessel(VesselUpdateDto vesselUpdateDto);
 
     void deleteById(long imo);
 
