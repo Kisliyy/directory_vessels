@@ -25,7 +25,7 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         var cacheManager = new CaffeineCacheManager();
-        cacheManager.setCacheNames(List.of("vessels_imo", "vessels_mmsi",  "vessel_users"));
+        cacheManager.setCacheNames(List.of("vessels_imo", "vessels_mmsi", "vessel_users"));
         cacheManager.setCaffeine(caffeine());
         return cacheManager;
     }

@@ -75,8 +75,8 @@ public class VesselController {
     })
     @GetMapping(value = "/api/vessels/destination/{destination}")
     public ResponseEntity<List<VesselResponseDto>> findByDestination(@PathVariable("destination")
-                                                               @NotNull
-                                                               @NotEmpty String destination) {
+                                                                     @NotNull
+                                                                     @NotEmpty String destination) {
         var vesselResponseDtoList = vesselService
                 .findByDestination(destination)
                 .stream()
