@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:9.6.8:///vessels?TC_INITFUNCTION=com.smartgeosystems.vessels_core.config.LiquibaseMigration::initMigration
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    hikari:
+      driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    properties:
+      hibernate:
+        dialect: "org.hibernate.dialect.PostgreSQL10Dialect"
+  liquibase:
+    change-log: classpath:db/liquibase/master.xml
+    contexts: test
+jwt:
+  secret-key: qweqweasdfaasdqwerwqerfeasrwject42363
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework: DEBUG

@@ -1,1 +1,6 @@
 rootProject.name = 'directory_vessels'
+
+include 'vessels_batch'
+include 'vessels_core'
+include 'common-utils'
+
