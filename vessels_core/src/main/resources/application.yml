@@ -1,0 +1,78 @@
+server:
+  port: 8085
+---
+spring:
+  application:
+    name: vessels_core
+  kafka:
+    consumer:
+      auto-offset-reset: latest
+      group-id: ${kafka_groupId}
+      bootstrap-servers: ${kafka_server}
+      client: ${kafka_client}
+      topics: ${kafka_topics}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.smartgeosystems.vessels_core.config.kafka.VesselDeserializer
+      concurrency: 10
+  liquibase:
+    enabled: true
+    change-log: classpath:db/liquibase/master.xml
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    generate-ddl: false
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5435/directory_vessels
+    username: postgres
+    password: password
+    hikari:
+      auto-commit: true
+      driver-class-name: org.postgresql.Driver
+      maximum-pool-size: 10
+  output:
+    ansi:
+      enabled: detect
+---
+springdoc:
+  override-with-generic-response: true
+  writer-with-default-pretty-printer: true
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  show-actuator: true
+---
+logging:
+  file:
+    name: log/core/vessels_core_log.log
+  level:
+    liquibase: INFO
+    org.springframework: INFO
+    org.apache: INFO
+    org.mapstruct: WARN
+    root: INFO
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 5
+      clean-history-on-start: false
+---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, logfile, metrics, liquibase, shutdown, caches
+  endpoint:
+    health:
+      show-details: when_authorized
+      show-components: when_authorized
+      roles: ADMIN
+---
+jwt:
+  secret_key:
+  expiration_date:

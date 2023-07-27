@@ -1,0 +1,15 @@
+FROM gradle:7.6.2 as build
+COPY --chown=gradle:gradle .. /opt/directory_vessels
+WORKDIR /opt/directory_vessels
+RUN gradle build --no-daemon -x test
+
+FROM bellsoft/liberica-openjre-alpine:11 as prod
+
+ENV \
+    CORE_APP_PATH=/opt/vessels_core
+
+
+COPY --from=build /opt/directory_vessels/vessels_core/build/libs/*.jar $CORE_APP_PATH/vessels_core.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "$CORE_APP_PATH/vessels_core.jar"]

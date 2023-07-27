@@ -1,0 +1,19 @@
+server:
+  port: 8086
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5435/directory_vessels
+    username: postgres
+    password: password
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  shell:
+    config:
+      location: log/batch/
+    history:
+      name: shell_batch.log

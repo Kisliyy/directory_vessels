@@ -1,0 +1,16 @@
+FROM gradle:7.6.2 as build
+COPY --chown=gradle:gradle .. /opt/directory_vessels
+WORKDIR /opt/directory_vessels
+RUN gradle build --no-daemon
+
+FROM bellsoft/liberica-openjre-alpine:11 as prod
+
+ENV \
+    BATCH_APP_PATH=/opt/vessels_batch
+
+
+COPY --from=build /opt/directory_vessels/vessels_batch/build/libs/*.jar $BATCH_APP_PATH/vessels_batch.jar
+COPY --from=build /opt/directory_vessels/vessels_batch/build/resources/main/application.yml $BATCH_APP_PATH/apllication.yml
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/directory_vessels.jar"]
