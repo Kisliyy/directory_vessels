@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VesselRepository extends JpaRepository<Vessel, Long> {
@@ -20,4 +21,7 @@ public interface VesselRepository extends JpaRepository<Vessel, Long> {
     @Modifying
     @Query(value = "UPDATE Vessel as v SET v.deleted = :deleted WHERE v.imo = :imo")
     void updateDelete(@Param("imo") long imo, @Param("deleted") boolean deleted);
+
+    @Where(clause = "deleted = false")
+    List<Vessel> findByDestination(String destination);
 }

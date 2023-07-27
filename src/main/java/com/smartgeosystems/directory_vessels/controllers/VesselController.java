@@ -23,6 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,6 +56,34 @@ public class VesselController {
         var responseDto = vesselMapperResponse.vesselToVesselResponseDto(vessel);
         return ResponseEntity
                 .ok(responseDto);
+    }
+
+
+    @Operation(summary = "Find vessels by destination")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200", description = "Find list vessel",
+                    content = @Content(schema = @Schema(implementation = VesselResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404", description = "Bad request",
+                    content = @Content(schema = @Schema(implementation = ExceptionValidationResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "403", description = "The user is not authenticated or not authorized"
+            )
+    })
+    @GetMapping(value = "/api/vessels/destination/{destination}")
+    public ResponseEntity<List<VesselResponseDto>> findByDestination(@PathVariable("destination")
+                                                               @NotNull
+                                                               @NotEmpty String destination) {
+        var vesselResponseDtoList = vesselService
+                .findByDestination(destination)
+                .stream()
+                .map(vesselMapperResponse::vesselToVesselResponseDto)
+                .collect(Collectors.toList());
+        return ResponseEntity
+                .ok(vesselResponseDtoList);
     }
 
     @Operation(summary = "Find vessel by mmsi")

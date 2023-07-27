@@ -6,6 +6,7 @@ import com.smartgeosystems.directory_vessels.models.Vessel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface VesselService {
@@ -26,4 +27,5 @@ public interface VesselService {
 
     Page<Vessel> findAll(Pageable page);
 
+    List<Vessel> findByDestination(String destination);
 }
